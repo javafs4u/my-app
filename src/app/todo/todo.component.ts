@@ -1,24 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
+import {ToDoService} from '../toDo.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-todo',
   templateUrl: './todo.component.html',
-  styleUrls: ['./todo.component.css']
+  styleUrls: ['./todo.component.css'],
+  providers:[ToDoService]
 })
-export class TodoComponent {
+export class TodoComponent implements OnInit {
 
   myToDos: Array<{ id: number, task: string }> = [];
   inputTask = '';
-  taskId = 0;
 
+  constructor(private toDoService: ToDoService, private httpClient: HttpClient) {
 
-  addTask() {
-    this.myToDos.push({ id: this.taskId++, task: this.inputTask });
+  }
+  ngOnInit(): void {
+    this.myToDos = this.toDoService.myToDos;
   }
 
-  deleteTask(eventData) {
-    let index = this.myToDos.findIndex(element => element.id === eventData.id);
-    this.myToDos.splice(index, 1);
+  
+
+  addTask() {
+    this.toDoService.addTask(this.inputTask);
+    this.inputTask='';
+
+    //call some API
+
+    this.httpClient.get('https://dummyjson.com/products11').subscribe((response)=>{
+      console.log(response);
+    })
   }
 
 }

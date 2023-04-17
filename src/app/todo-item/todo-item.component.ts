@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { ToDoService } from '../toDo.service';
 
 @Component({
   selector: 'app-todo-item',
@@ -7,13 +8,12 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 })
 export class TodoItemComponent implements OnInit, OnDestroy, OnChanges {
 
-  @Input() toDoItemTask: { id: number, task: string };
 
-  @Output() deleteTaskEvent = new EventEmitter<{ id: number }>();
+  @Input() toDoItemTask: { id: number, task: string };
 
   count = 19;
 
-  constructor() {
+  constructor(private toDoService: ToDoService) {
     console.log('count is ', this.count)
     console.log('Constructor is called', this.toDoItemTask);
   }
@@ -23,15 +23,15 @@ export class TodoItemComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     console.log('ngOnInit is called', this.toDoItemTask);
-    this.toDoItemTask = {...this.toDoItemTask, task: 'TASK || ' + this.toDoItemTask.task}
+    this.toDoItemTask = { ...this.toDoItemTask, task: 'TASK || ' + this.toDoItemTask.task }
   }
-  
-   ngOnChanges(changes: SimpleChanges): void {
-      console.log('Input got changed ', changes);
-   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Input got changed ', changes);
+  }
 
   deleteTask() {
-    this.deleteTaskEvent.emit({ id: this.toDoItemTask.id });
+    this.toDoService.deleteTask(this.toDoItemTask.id);
   }
 
 }
